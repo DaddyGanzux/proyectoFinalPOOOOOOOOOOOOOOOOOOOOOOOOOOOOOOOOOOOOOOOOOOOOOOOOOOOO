@@ -20,8 +20,8 @@ using namespace std;
 
 int generarNumeroAleatorio(int min, int max) //Generador de números aleatorios.
 {
-    static std::mt19937 generador(static_cast<unsigned int>(std::time(0)));
-    std::uniform_int_distribution<int> distribucion(min, max);
+    static mt19937 generador(static_cast<unsigned int>(std::time(0)));
+    uniform_int_distribution<int> distribucion(min, max);
     return distribucion(generador);
 }
 
@@ -113,17 +113,17 @@ public:
 
     void atacar(Jugador& nombreEnemigo)
     {
-        int daño = std::max(0, ataque - nombreEnemigo.defensa);
+        int daño = max(0, ataque - nombreEnemigo.defensa);
         daño += generarNumeroAleatorio(0, 29);
         nombreEnemigo.salud -= daño;
-        std::cout << nombreJugador << " ataca a " << nombreEnemigo.nombreJugador << " causando " << daño << " de daño." << std::endl;
+        cout << nombreJugador << " ataca a " << nombreEnemigo.nombreJugador << " causando " << daño << " de daño." << endl;
         if (nombreEnemigo.salud < 0) nombreEnemigo.salud = 0;
     }
 
     // Para mostrar el estado
     void mostrarEstado() const 
     {
-        std::cout << nombreJugador << " - Salud: " << salud << std::endl;
+        cout << nombreJugador << " - Salud: " << salud << endl;
     }
 
     // Para verificar si está vivo
