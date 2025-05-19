@@ -1,0 +1,9 @@
+﻿  Source.cpp
+C:\Users\User\Desktop\El gran juego\Source.cpp(69,31): error C2061: error de sintaxis: identificador 'Pocion'
+C:\Users\User\Desktop\El gran juego\Source.cpp(71,30): error C2065: 'paramPocion': identificador no declarado
+C:\Users\User\Desktop\El gran juego\Source.cpp(232,30): error C2660: 'Jugador::setRestartOroJugador': la función no acepta 1 argumentos
+      C:\Users\User\Desktop\El gran juego\Source.cpp(69,10):
+      vea la declaración de 'Jugador::setRestartOroJugador'
+      C:\Users\User\Desktop\El gran juego\Source.cpp(232,30):
+      al hacer coincidir la lista de argumentos '(Pocion)'
+  
