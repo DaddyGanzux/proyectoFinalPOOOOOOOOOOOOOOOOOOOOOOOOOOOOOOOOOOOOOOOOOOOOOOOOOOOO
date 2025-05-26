@@ -1,9 +1,40 @@
 ﻿  Source.cpp
-C:\Users\User\Desktop\El gran juego\Source.cpp(69,31): error C2061: error de sintaxis: identificador 'Pocion'
-C:\Users\User\Desktop\El gran juego\Source.cpp(71,30): error C2065: 'paramPocion': identificador no declarado
-C:\Users\User\Desktop\El gran juego\Source.cpp(232,30): error C2660: 'Jugador::setRestartOroJugador': la función no acepta 1 argumentos
-      C:\Users\User\Desktop\El gran juego\Source.cpp(69,10):
-      vea la declaración de 'Jugador::setRestartOroJugador'
-      C:\Users\User\Desktop\El gran juego\Source.cpp(232,30):
-      al hacer coincidir la lista de argumentos '(Pocion)'
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(178,67): warning C4267: 'argumento': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(249,39): error C2440: '<function-style-cast>': no se puede realizar la conversión de 'initializer list' a 'Pocion'
+      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(249,39):
+      'Pocion::Pocion': la función no acepta 5 argumentos
+          C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(249,39):
+          al hacer coincidir la lista de argumentos '(int, int, int, const char [27], const char [15])'
+  
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(250,39): error C2440: '<function-style-cast>': no se puede realizar la conversión de 'initializer list' a 'Pocion'
+      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(250,39):
+      'Pocion::Pocion': la función no acepta 5 argumentos
+          C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(250,39):
+          al hacer coincidir la lista de argumentos '(int, int, int, const char [27], const char [15])'
+  
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(251,39): error C2440: '<function-style-cast>': no se puede realizar la conversión de 'initializer list' a 'Pocion'
+      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(251,39):
+      'Pocion::Pocion': la función no acepta 5 argumentos
+          C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(251,39):
+          al hacer coincidir la lista de argumentos '(int, int, int, const char [28], const char [21])'
+  
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(262,30): error C2039: "funcMostrarInfoPocion": no es un miembro de "Pocion"
+      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(58,7):
+      vea la declaración de 'Pocion'
+  
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(273,55): error C2039: "getOroJugador": no es un miembro de "Jugador"
+      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(82,7):
+      vea la declaración de 'Jugador'
+  
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(291,30): error C2039: "getOroJugador": no es un miembro de "Jugador"
+      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(82,7):
+      vea la declaración de 'Jugador'
+  
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(291,68): error C2039: "getPrecioPocion": no es un miembro de "Pocion"
+      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(58,7):
+      vea la declaración de 'Pocion'
+  
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(293,30): error C2039: "setRestartOroJugador": no es un miembro de "Jugador"
+      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(82,7):
+      vea la declaración de 'Jugador'
   
