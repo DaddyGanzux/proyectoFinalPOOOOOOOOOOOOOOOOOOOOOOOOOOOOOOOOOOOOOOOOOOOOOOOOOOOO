@@ -15,13 +15,24 @@
 using namespace std;
 
 
-//Genarador de números aleatorios 
+//Genarador de números aleatorios by ChatGPT
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int generarNumeroAleatorio(int min, int max) //Generador de números aleatorios.
 {
     static std::mt19937 generador(static_cast<unsigned int>(std::time(0)));
     std::uniform_int_distribution<int> distribucion(min, max);
     return distribucion(generador);
+}
+
+//Imprimir lento by ChatGPT
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void imprimirLento(const std::string& texto, int retrasoMilisegundos)
+{
+    for (char c : texto)
+    {
+        std::cout << c << std::flush;
+        std::this_thread::sleep_for(std::chrono::milliseconds(retrasoMilisegundos));
+    }
 }
 
 //Clase Item
@@ -327,7 +338,87 @@ void combate(Jugador& jugador, Enemigo& enemigo)
     }
 }
 
+//Ya ahora si el jueguito
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main()
 {
-                
+    int option;
+    string textoVacio;
+    string Lento;
+
+    while (true){
+        system("cls");
+
+        string despertar = "Despiertas en un lugar extraño.\n";
+        imprimirLento(despertar, 40);
+
+        string primeraOpcion = "Decides 1- Levantarte   2- Seguir durmiendo.\n";
+        imprimirLento(primeraOpcion, 30);
+        cin >> option;
+
+        switch (option)
+        {
+        case 1:
+
+            Lento = "Muy bien con optimismo, te esperan buenas cosas en este viaje, recuerda que al que madruga Dios le ayuda.\n";
+            imprimirLento(Lento, 40);
+            break;
+
+        case 2:
+            Lento = "Pues no papito aqui no se hace lo que quieras mientras vivas en esta casa me haras caso MI CODIGO!!! MIS REGLAS!!!\n";
+            imprimirLento(Lento, 40);
+
+            break;
+
+        default:
+            cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+
+            system("pause");
+
+            continue;
+        }
+
+        system("pause");
+        break;
+
+    }
+
+    system("cls");
+
+    Lento = "Bueno, ya estamos levantaditos asi que \n";
+    imprimirLento(Lento, 40);
+
+    Lento = "...\n";
+    imprimirLento(Lento, 1000);
+
+    Lento = "RWAAAAAAAAAAAAAAAAR\n";
+    imprimirLento(Lento, 20);
+
+    system("pause");
+    system("cls");
+
+    Lento = "flush\n";
+    imprimirLento(Lento, 20);
+    Lento = "flush\n";
+    imprimirLento(Lento, 20);
+    Lento = "flush\n";
+    imprimirLento(Lento, 20);
+
+    system("pause");
+    system("cls");
+
+    Lento = "WOW, viste ese dragon, nunca lo habia visto antes espero que no sea un problema\n";
+	imprimirLento(Lento, 40);
+    
+	Lento = " Que dices? QUE QUE QUIERES HACER!?\n";
+	imprimirLento(Lento, 40);  
+
+    Lento = "1- Ir a matarlo 2- Ir a matarlo 3- Ir a matarlo 4- Ir a matarlo n- Ir a matarlo";
+	imprimirLento(Lento, 30);
+	getline(cin, textoVacio);
+
+
+
+
+    return 0;
 }
