@@ -64,7 +64,7 @@ public:
     virtual ~Item() {}
 };
 
-//Objeto Poción 
+//Objeto Poción by ChatGPT
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Pocion : public Item {
     string descripcion;
@@ -75,12 +75,12 @@ public:
         : Item(_nombre, "pocion", _cantidad), descripcion(_descripcion), curacion(_curacion) {}
 
     void usar() override {
-        cout << "Usaste " << nombre << ": " << descripcion << " +" << curacion << " HP." << endl;
+        cout << "Usaste " << nombre << ": " << descripcion << " +" << curacion << " HP.\n";
     }
 
     void mostrarInfo() const override {
         Item::mostrarInfo();
-        cout << "   Efecto: " << descripcion << " (+ " << curacion << " HP)" << endl;
+        cout << "   Efecto: " << descripcion << " (+ " << curacion << " HP)\n";
     }
 
     int getCuracion() const override {
@@ -88,25 +88,50 @@ public:
     }
 };
 
-//Clase Jugador
+//Clase Arma by ChatGPT
+// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class Arma : public Item {
+    int dano;
+
+public:
+    Arma(string _nombre, int _cantidad, int _dano)
+        : Item(_nombre, "arma", _cantidad), dano(_dano) {}
+
+    void usar() override {
+        cout << "Equipas " << nombre << ". Daño de ataque: " << dano << endl;
+    }
+
+    int getDano() const override { return dano; }
+
+    void mostrarInfo() const override {
+        Item::mostrarInfo();
+        cout << "   Daño de ataque: " << dano << endl;
+    }
+};
+
+//Clase Jugador con ayuda de ChatGPT
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class Jugador {
+class Jugador 
+{
     string nombre;
     int salud;
     int saludMaxima;
-    int ataque;
+    int ataqueBase;
     int defensa;
     int oro;
+    Item* armaEquipada = nullptr;
     vector<Item*> inventario;
 
 public:
     Jugador(string _nombre)
-        : nombre(_nombre), salud(200), saludMaxima(300),
-        ataque(generarNumeroAleatorio(20, 50)), defensa(25), oro(100) {}
+        : nombre(_nombre), salud(200), saludMaxima(300), ataqueBase(generarNumeroAleatorio(10,20)), defensa(15), oro(50) {}
 
-    void agregarItem(Item* item) {
-        for (auto& i : inventario) {
-            if (i->getNombre() == item->getNombre()) {
+    void agregarItem(Item* item) 
+    {
+        for (auto& i : inventario) 
+        {
+            if (i->getNombre() == item->getNombre()) 
+            {
                 i->reducirCantidad(-item->getCantidad());
                 delete item;
                 return;
@@ -115,8 +140,9 @@ public:
         inventario.push_back(item);
     }
 
-    void mostrarInventario() const {
-        cout << "\n--- Inventario de " << nombre << " ---\n";
+    void mostrarInventario() const 
+    {
+        cout << "--- Inventario de " << nombre << " ---\n";
         if (inventario.empty()) {
             cout << "Inventario vacío.\n";
             return;
@@ -127,65 +153,78 @@ public:
         }
     }
 
-    void usarItem() {
+    void usarItem() 
+    {
         mostrarInventario();
         if (inventario.empty()) return;
 
         int eleccion;
-        cout << "Selecciona el número del item a usar: ";
+        cout << "Selecciona el número del item a usar:\n";
         cin >> eleccion;
         eleccion--;
 
-        if (eleccion >= 0 && eleccion < inventario.size()) {
+        if (eleccion >= 0 && eleccion < inventario.size()) 
+        {
             inventario[eleccion]->usar();
+
             salud += inventario[eleccion]->getCuracion();
             if (salud > saludMaxima) salud = saludMaxima;
 
-            inventario[eleccion]->reducirCantidad(1);
+            if (inventario[eleccion]->getTipo() == "arma") 
+            {
+                armaEquipada = inventario[eleccion];
+            }
 
+            inventario[eleccion]->reducirCantidad(1);
             if (inventario[eleccion]->getCantidad() <= 0) {
+                if (inventario[eleccion] == armaEquipada) armaEquipada = nullptr;
                 delete inventario[eleccion];
                 inventario.erase(inventario.begin() + eleccion);
                 cout << "Item eliminado del inventario.\n";
             }
         }
-
-
-        else {
+        else 
+        {
             cout << "Opción inválida.\n";
         }
     }
 
-    void mostrarEstado() const {
+    int getAtaque() const 
+    {
+        if (armaEquipada) return ataqueBase + armaEquipada->getDano();
+        return ataqueBase;
+    }
+
+    void mostrarEstado() const 
+    {
         cout << nombre << " - Salud: " << salud << "/" << saludMaxima
-            << ", Ataque: " << ataque << ", Defensa: " << defensa
+            << ", Ataque: " << getAtaque() << ", Defensa: " << defensa
             << ", Oro: " << oro << endl;
     }
 
-    bool estaVivo() const {
-        return salud > 0;
-    }
-
-    void recibirDanio(int danio) {
+    bool estaVivo() const { return salud > 0; }
+    void recibirDanio(int danio) 
+    {
         int dañoReal = max(0, danio - defensa);
         salud -= dañoReal;
         if (salud < 0) salud = 0;
         cout << nombre << " recibió " << dañoReal << " de daño. Salud restante: " << salud << endl;
     }
 
-    int getAtaque() const { return ataque; }
     void ganarOro(int cantidad) { oro += cantidad; }
-    bool gastarOro(int cantidad) {
-        if (oro >= cantidad) {
+    bool gastarOro(int cantidad) 
+    {
+        if (oro >= cantidad)
+        {
             oro -= cantidad;
             return true;
         }
         return false;
     }
-
     int getOro() const { return oro; }
 
-    ~Jugador() {
+    ~Jugador() 
+    {
         for (auto& i : inventario) delete i;
     }
 };
@@ -211,11 +250,10 @@ public:
     void mostrarEstado() const
     {
         cout << nombre << " - Salud: " << salud << ", Ataque: " << ataque << ", Defensa: " << defensa << endl;
-
-        system("pause");
     }
 
-    bool estaVivo() const {
+    bool estaVivo() const 
+    {
         return salud > 0;
     }
 
@@ -235,52 +273,111 @@ public:
 
 //Clase Tienda
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class Tienda {
-    struct Producto {
+class Tienda
+{
+    struct Producto
+    {
         string nombre;
         string descripcion;
         int curacion;
         int precio;
     };
 
-    vector<Producto> stock = {
+    struct ProductoArma
+    {
+        string nombre;
+        int dano;
+        int precio;
+    };
+
+    vector<Producto> stock =
+    {
         { "Poción de Vida", "Restaura 50 HP", 50, 30 },
         { "Elixir Menor", "Restaura 30 HP", 30, 20 },
         { "Poción Mayor", "Restaura 100 HP", 100, 50 }
     };
 
-public:
-    void mostrarProductos() {
-        cout << "\n--- Tienda de Pociones ---\n";
-        for (size_t i = 0; i < stock.size(); ++i) {
-            cout << i + 1 << ". " << stock[i].nombre << " - " << stock[i].descripcion
-                << " | Cura: " << stock[i].curacion << " | Precio: " << stock[i].precio << " oro\n";
-        }
-        cout << stock.size() + 1 << ". Salir\n";
-    }
+    vector<ProductoArma> stockArmas =
+    {
+        { "Espada de Madera", generarNumeroAleatorio(10,40), 45},
+        { "Espada de Hierro", generarNumeroAleatorio(20,55), 60},
+        { "Espada de Diamante", generarNumeroAleatorio(30,70), 85},
+        { "Hacha de Madera", generarNumeroAleatorio(20,30), 55},
+        { "Hacha de Hierro", generarNumeroAleatorio(30,45), 70},
+        { "Hacha de Diamante", generarNumeroAleatorio(40,60), 95}
+    };
 
-    void comprar(Jugador& jugador) {
+public:
+    void comprar(Jugador& jugador)
+    {
         int opcion;
-        while (true) {
-            mostrarProductos();
+        while (true)
+        {
+            system("pause");
+            system("cls");
+
+            cout << "--- Tienda ---\n";
             cout << "Oro disponible: " << jugador.getOro() << endl;
-            cout << "Selecciona el número del producto que deseas comprar: ";
+            cout << "1. Comprar pociones 2. Comprar armas 3. Salir Opción:\n";
             cin >> opcion;
 
-            if (opcion == static_cast<int>(stock.size() + 1)) break;
+            if (opcion == 1)
+            {
+                system("pause");
+                system("cls");
 
-            if (opcion >= 1 && opcion <= static_cast<int>(stock.size())) {
-                const Producto& p = stock[opcion - 1];
-                if (jugador.gastarOro(p.precio)) {
-                    jugador.agregarItem(new Pocion(p.nombre, 1, p.descripcion, p.curacion));
-                    cout << "Has comprado " << p.nombre << "!\n";
+                cout << "--- Pociones ---\n";
+                for (size_t i = 0; i < stock.size(); ++i)
+                {
+                    cout << i + 1 << ". " << stock[i].nombre << " - " << stock[i].descripcion
+                        << " | Cura: " << stock[i].curacion << " | Precio: " << stock[i].precio << " oro\n";
                 }
-                else {
-                    cout << "No tienes suficiente oro.\n";
+                cout << stock.size() + 1 << ". Volver";
+                cin >> opcion;
+                if (opcion >= 1 && opcion <= static_cast<int>(stock.size()))
+                {
+                    const Producto& p = stock[opcion - 1];
+                    if (jugador.gastarOro(p.precio))
+                    {
+                        jugador.agregarItem(new Pocion(p.nombre, 1, p.descripcion, p.curacion));
+                        cout << "Has comprado " << p.nombre << "!\n";
+                    }
+                    else
+                    {
+                        cout << "No tienes suficiente oro.\n";
+                    }
                 }
             }
-            else {
-                cout << "Opción inválida.\n";
+            else if (opcion == 2)
+            {
+                system("pause");
+                system("cls");
+
+                cout << "--- Armas ---\n";
+                for (size_t i = 0; i < stockArmas.size(); ++i)
+                {
+                    cout << i + 1 << ". " << stockArmas[i].nombre << " | Daño: " << stockArmas[i].dano
+                        << " | Precio: " << stockArmas[i].precio << " oro\n";
+                }
+                cout << stockArmas.size() + 1 << ". Volver";
+                cin >> opcion;
+                if (opcion >= 1 && opcion <= static_cast<int>(stockArmas.size()))
+                {
+                    const ProductoArma& a = stockArmas[opcion - 1];
+                    if (jugador.gastarOro(a.precio))
+                    {
+                        jugador.agregarItem(new Arma(a.nombre, 1, a.dano));
+                        cout << "Has comprado " << a.nombre << "!\n";
+                    }
+                    else
+                    {
+                        cout << "No tienes suficiente oro.\n";
+                    }
+                }
+            }
+            else
+            {
+                break;
             }
         }
     }
@@ -292,7 +389,7 @@ void combate(Jugador& jugador, Enemigo& enemigo)
 {
     system("cls");
 
-    cout << "\n--- ¡Comienza el combate! ---\n";
+    cout << "--- ¡Comienza el combate! ---\n";
     jugador.mostrarEstado();
     enemigo.mostrarEstado();
 
@@ -302,7 +399,7 @@ void combate(Jugador& jugador, Enemigo& enemigo)
 
         system("cls");
 
-        cout << "\nElige acción:\n1. Atacar\n2. Usar objeto\nOpción: ";
+        cout << "Elige acción:  1. Atacar  2. Usar objeto\n";
         cin >> opcion;
 
         if (opcion == 1)
@@ -330,11 +427,11 @@ void combate(Jugador& jugador, Enemigo& enemigo)
     {
         int oroGanado = generarNumeroAleatorio(5, 15);
         jugador.ganarOro(oroGanado);
-        cout << "\n¡Has derrotado al " << enemigo.getNombre() << "! Ganaste " << oroGanado << " de oro.\n";
+        cout << "¡Has derrotado al " << enemigo.getNombre() << "! Ganaste " << oroGanado << " de oro.\n";
     }
     else
     {
-        cout << "\nHas sido derrotado...\n";
+        cout << "Has sido derrotado...\n";
     }
 }
 
@@ -346,7 +443,8 @@ int main()
     string textoVacio;
     string Lento;
 
-    while (true) {
+    while (true) 
+    {
         system("cls");
 
         string despertar = "Despiertas en un lugar extraño.\n";
@@ -413,11 +511,70 @@ int main()
     Lento = " Que dices? QUE QUE QUIERES HACER!?\n";
     imprimirLento(Lento, 40);
 
-    Lento = "1- Ir a matarlo 2- Ir a matarlo 3- Ir a matarlo 4- Ir a matarlo n- Ir a matarlo";
+    Lento = "1- Ir a matarlo 2- Ir a matarlo 3- Ir a matarlo 4- Ir a matarlo n- Ir a matarlo\n";
     imprimirLento(Lento, 30);
     getline(cin, textoVacio);
+    
+	Lento = "Bueno, si tu lo dices ya que no hay otra opcion, vamos a matarlo\n";
+	imprimirLento(Lento, 40);
 
+	Lento = "Creo que hay una aldea más adelante, deberiamos ir\n";
+	imprimirLento(Lento, 40);
 
+	Lento = "Creo que el camino era dos para enfente, uno a la derecha, otro para enfrente y uno a la izquierda.\n";
+	imprimirLento(Lento, 40);
+
+	system("pause"); 
+
+    while (true || option == !4) 
+    {
+        system("cls");
+
+        string primeraOpcion = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
+        imprimirLento(primeraOpcion, 30);
+        cin >> option;
+
+        switch (option)
+        {
+        case 1:
+
+            system("cls");
+			Jugador.mostrarInventario();
+
+            break;
+
+        case 2:
+
+            system("cls");
+            Enemigo enemigo;
+            combate(Jugador, enemigo);
+
+            break;
+
+		case 3:
+
+            system("cls");
+            Enemigo enemigo;
+            combate(Jugador, enemigo);
+
+            break;
+
+		case 4:
+
+            continue;
+
+        default:
+            cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+
+            system("pause");
+
+            continue;
+        }
+
+        system("pause");
+        break;
+
+    }
 
 
     return 0;
