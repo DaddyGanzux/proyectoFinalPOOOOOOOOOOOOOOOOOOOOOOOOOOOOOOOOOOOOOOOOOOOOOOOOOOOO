@@ -4,15 +4,13 @@
 #include <Locale>
 #include <time.h>
 #include <codecvt>
-#include <string>
 #include <thread>
 #include <random>
 #include <ctime>
 #include <string>
 #include <vector>
 #include <cstdlib>
-
-using namespace std;
+#include <limits>
 
 
 //Genarador de números aleatorios by ChatGPT
@@ -39,48 +37,49 @@ void imprimirLento(const std::string& texto, int retrasoMilisegundos)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Item {
 protected:
-    string nombre;
-    string tipo;
+    std::string nombre;
+    std::string tipo;
     int cantidad;
 
 public:
-    Item(string _nombre, string _tipo, int _cantidad)
+    Item(std::string _nombre, std::string _tipo, int _cantidad)
         : nombre(_nombre), tipo(_tipo), cantidad(_cantidad) {}
 
     virtual void usar() = 0;
 
-    string getNombre() const { return nombre; }
-    string getTipo() const { return tipo; }
+    std::string getNombre() const { return nombre; }
+    std::string getTipo() const { return tipo; }
     int getCantidad() const { return cantidad; }
 
     void reducirCantidad(int c) { cantidad -= c; }
 
     virtual void mostrarInfo() const {
-        cout << nombre << " | Tipo: " << tipo << " | Cantidad: " << cantidad << endl;
+        std:: cout << nombre << " | Tipo: " << tipo << " | Cantidad: " << cantidad << std::endl;
     }
 
     virtual int getCuracion() const { return 0; }
+	virtual int getDano() const { return 0; }
 
     virtual ~Item() {}
 };
 
-//Objeto Poción by ChatGPT
+//Objeto Poción ayda de ChatGPT
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Pocion : public Item {
-    string descripcion;
+    std::string descripcion;
     int curacion;
 
 public:
-    Pocion(string _nombre, int _cantidad, string _descripcion, int _curacion)
+    Pocion(std::string _nombre, int _cantidad, std::string _descripcion, int _curacion)
         : Item(_nombre, "pocion", _cantidad), descripcion(_descripcion), curacion(_curacion) {}
 
     void usar() override {
-        cout << "Usaste " << nombre << ": " << descripcion << " +" << curacion << " HP.\n";
+        std::cout << "Usaste " << nombre << ": " << descripcion << " +" << curacion << " HP.\n";
     }
 
     void mostrarInfo() const override {
         Item::mostrarInfo();
-        cout << "   Efecto: " << descripcion << " (+ " << curacion << " HP)\n";
+        std::cout << "   Efecto: " << descripcion << " (+ " << curacion << " HP)\n";
     }
 
     int getCuracion() const override {
@@ -94,18 +93,18 @@ class Arma : public Item {
     int dano;
 
 public:
-    Arma(string _nombre, int _cantidad, int _dano)
+    Arma(std::string _nombre, int _cantidad, int _dano)
         : Item(_nombre, "arma", _cantidad), dano(_dano) {}
 
     void usar() override {
-        cout << "Equipas " << nombre << ". Daño de ataque: " << dano << endl;
+        std::cout << "Equipas " << nombre << ". Daño de ataque: " << dano << std::endl;
     }
 
     int getDano() const override { return dano; }
 
     void mostrarInfo() const override {
         Item::mostrarInfo();
-        cout << "   Daño de ataque: " << dano << endl;
+        std::cout << "   Daño de ataque: " << dano << std::endl;
     }
 };
 
@@ -113,18 +112,18 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Jugador 
 {
-    string nombre;
+    std::string nombre;
     int salud;
     int saludMaxima;
     int ataqueBase;
     int defensa;
     int oro;
     Item* armaEquipada = nullptr;
-    vector<Item*> inventario;
+    std::vector<Item*> inventario;
 
 public:
-    Jugador(string _nombre)
-        : nombre(_nombre), salud(200), saludMaxima(300), ataqueBase(generarNumeroAleatorio(10,20)), defensa(15), oro(50) {}
+    Jugador(std::string _nombre)
+        : nombre(_nombre), salud(200), saludMaxima(300), ataqueBase(26), defensa(15), oro(50) {}
 
     void agregarItem(Item* item) 
     {
@@ -140,15 +139,16 @@ public:
         inventario.push_back(item);
     }
 
+public:
     void mostrarInventario() const 
     {
-        cout << "--- Inventario de " << nombre << " ---\n";
+        std::cout << "--- Inventario de " << nombre << " ---\n";
         if (inventario.empty()) {
-            cout << "Inventario vacío.\n";
+            std::cout << "Inventario vacío.\n";
             return;
         }
         for (size_t i = 0; i < inventario.size(); ++i) {
-            cout << i + 1 << ". ";
+            std::cout << i + 1 << ". ";
             inventario[i]->mostrarInfo();
         }
     }
@@ -159,8 +159,8 @@ public:
         if (inventario.empty()) return;
 
         int eleccion;
-        cout << "Selecciona el número del item a usar:\n";
-        cin >> eleccion;
+        std::cout << "Selecciona el número del item a usar:\n";
+        std::cin >> eleccion;
         eleccion--;
 
         if (eleccion >= 0 && eleccion < inventario.size()) 
@@ -180,12 +180,12 @@ public:
                 if (inventario[eleccion] == armaEquipada) armaEquipada = nullptr;
                 delete inventario[eleccion];
                 inventario.erase(inventario.begin() + eleccion);
-                cout << "Item eliminado del inventario.\n";
+                std::cout << "Item eliminado del inventario.\n";
             }
         }
         else 
         {
-            cout << "Opción inválida.\n";
+            std::cout << "Opción inválida.\n";
         }
     }
 
@@ -197,18 +197,18 @@ public:
 
     void mostrarEstado() const 
     {
-        cout << nombre << " - Salud: " << salud << "/" << saludMaxima
+        std::cout << nombre << " - Salud: " << salud << "/" << saludMaxima
             << ", Ataque: " << getAtaque() << ", Defensa: " << defensa
-            << ", Oro: " << oro << endl;
+            << ", Oro: " << oro << std::endl;
     }
 
     bool estaVivo() const { return salud > 0; }
     void recibirDanio(int danio) 
     {
-        int dañoReal = max(0, danio - defensa);
+        int dañoReal = std::max(0, danio - defensa);
         salud -= dañoReal;
         if (salud < 0) salud = 0;
-        cout << nombre << " recibió " << dañoReal << " de daño. Salud restante: " << salud << endl;
+        std::cout << nombre << " recibió " << dañoReal << " de daño. Salud restante: " << salud << std::endl;
     }
 
     void ganarOro(int cantidad) { oro += cantidad; }
@@ -223,16 +223,12 @@ public:
     }
     int getOro() const { return oro; }
 
-    ~Jugador() 
-    {
-        for (auto& i : inventario) delete i;
-    }
 };
 
 //Clase Enemigo
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Enemigo {
-    string nombre;
+    std::string nombre;
     int salud;
     int ataque;
     int defensa;
@@ -240,16 +236,16 @@ class Enemigo {
 public:
     Enemigo()
     {
-        vector<string> nombres = { "Goblin", "Orco", "Troll", "Bandido", "Esqueleto", "Asesino" };
+        std::vector<std::string> nombres = { "Goblin", "Orco", "Troll", "Bandido", "Esqueleto", "Asesino" };
         nombre = nombres[generarNumeroAleatorio(0, nombres.size() - 1)];
         salud = generarNumeroAleatorio(80, 360);
         ataque = generarNumeroAleatorio(20, 65);
-        defensa = generarNumeroAleatorio(10, 30);
+        defensa = generarNumeroAleatorio(0, 25);
     }
 
     void mostrarEstado() const
     {
-        cout << nombre << " - Salud: " << salud << ", Ataque: " << ataque << ", Defensa: " << defensa << endl;
+        std::cout << nombre << " - Salud: " << salud << ", Ataque: " << ataque << ", Defensa: " << defensa << std::endl;
     }
 
     bool estaVivo() const 
@@ -259,16 +255,16 @@ public:
 
     void recibirDanio(int danio)
     {
-        int dañoReal = max(0, danio - defensa);
+        int dañoReal = std::max(0, danio - defensa);
         salud -= dañoReal;
         if (salud < 0) salud = 0;
-        cout << nombre << " recibió " << dañoReal << " de daño. Salud restante: " << salud << endl;
+        std::cout << nombre << " recibió " << dañoReal << " de daño. Salud restante: " << salud << std::endl;
 
         system("pause");
     }
 
     int getAtaque() const { return ataque; }
-    string getNombre() const { return nombre; }
+    std::string getNombre() const { return nombre; }
 };
 
 //Clase Tienda
@@ -277,34 +273,34 @@ class Tienda
 {
     struct Producto
     {
-        string nombre;
-        string descripcion;
+        std::string nombre;
+        std::string descripcion;
         int curacion;
         int precio;
     };
 
     struct ProductoArma
     {
-        string nombre;
+        std::string nombre;
         int dano;
         int precio;
     };
 
-    vector<Producto> stock =
+    std::vector<Producto> stock =
     {
         { "Poción de Vida", "Restaura 50 HP", 50, 30 },
         { "Elixir Menor", "Restaura 30 HP", 30, 20 },
         { "Poción Mayor", "Restaura 100 HP", 100, 50 }
     };
 
-    vector<ProductoArma> stockArmas =
+    std::vector<ProductoArma> stockArmas =
     {
-        { "Espada de Madera", generarNumeroAleatorio(10,40), 45},
-        { "Espada de Hierro", generarNumeroAleatorio(20,55), 60},
-        { "Espada de Diamante", generarNumeroAleatorio(30,70), 85},
-        { "Hacha de Madera", generarNumeroAleatorio(20,30), 55},
-        { "Hacha de Hierro", generarNumeroAleatorio(30,45), 70},
-        { "Hacha de Diamante", generarNumeroAleatorio(40,60), 95}
+        { "Espada de Madera", generarNumeroAleatorio(20,50), 45},
+        { "Espada de Hierro", generarNumeroAleatorio(30,65), 60},
+        { "Espada de Diamante", generarNumeroAleatorio(40,80), 85},
+        { "Hacha de Madera", generarNumeroAleatorio(30,40), 55},
+        { "Hacha de Hierro", generarNumeroAleatorio(40,55), 70},
+        { "Hacha de Diamante", generarNumeroAleatorio(50,70), 95}
     };
 
 public:
@@ -313,65 +309,59 @@ public:
         int opcion;
         while (true)
         {
-            system("pause");
-            system("cls");
-
-            cout << "--- Tienda ---\n";
-            cout << "Oro disponible: " << jugador.getOro() << endl;
-            cout << "1. Comprar pociones 2. Comprar armas 3. Salir Opción:\n";
-            cin >> opcion;
+      
+            std::cout << "--- Tienda ---\n";
+            std::cout << "Oro disponible: " << jugador.getOro() << std::endl;
+            std::cout << "1. Comprar pociones 2. Comprar armas 3. Salir Opción:\n";
+            std::cin >> opcion;
 
             if (opcion == 1)
             {
-                system("pause");
-                system("cls");
-
-                cout << "--- Pociones ---\n";
+                
+                std::cout << "--- Pociones ---\n";
                 for (size_t i = 0; i < stock.size(); ++i)
                 {
-                    cout << i + 1 << ". " << stock[i].nombre << " - " << stock[i].descripcion
+                    std::cout << i + 1 << ". " << stock[i].nombre << " - " << stock[i].descripcion
                         << " | Cura: " << stock[i].curacion << " | Precio: " << stock[i].precio << " oro\n";
                 }
-                cout << stock.size() + 1 << ". Volver";
-                cin >> opcion;
+                std::cout << stock.size() + 1 << ". Volver";
+                std::cin >> opcion;
                 if (opcion >= 1 && opcion <= static_cast<int>(stock.size()))
                 {
                     const Producto& p = stock[opcion - 1];
                     if (jugador.gastarOro(p.precio))
                     {
                         jugador.agregarItem(new Pocion(p.nombre, 1, p.descripcion, p.curacion));
-                        cout << "Has comprado " << p.nombre << "!\n";
+                        std::cout << "Has comprado " << p.nombre << "!\n";
                     }
                     else
                     {
-                        cout << "No tienes suficiente oro.\n";
+                        std::cout << "No tienes suficiente oro.\n";
                     }
                 }
             }
             else if (opcion == 2)
             {
-                system("pause");
-                system("cls");
-
-                cout << "--- Armas ---\n";
+               
+                std::cout << "--- Armas ---\n";
                 for (size_t i = 0; i < stockArmas.size(); ++i)
                 {
-                    cout << i + 1 << ". " << stockArmas[i].nombre << " | Daño: " << stockArmas[i].dano
+                    std::cout << i + 1 << ". " << stockArmas[i].nombre << " | Daño: " << stockArmas[i].dano
                         << " | Precio: " << stockArmas[i].precio << " oro\n";
                 }
-                cout << stockArmas.size() + 1 << ". Volver";
-                cin >> opcion;
+                std::cout << stockArmas.size() + 1 << ". Volver";
+                std::cin >> opcion;
                 if (opcion >= 1 && opcion <= static_cast<int>(stockArmas.size()))
                 {
                     const ProductoArma& a = stockArmas[opcion - 1];
                     if (jugador.gastarOro(a.precio))
                     {
                         jugador.agregarItem(new Arma(a.nombre, 1, a.dano));
-                        cout << "Has comprado " << a.nombre << "!\n";
+                        std::cout << "Has comprado " << a.nombre << "!\n";
                     }
                     else
                     {
-                        cout << "No tienes suficiente oro.\n";
+                        std::cout << "No tienes suficiente oro.\n";
                     }
                 }
             }
@@ -387,9 +377,8 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void combate(Jugador& jugador, Enemigo& enemigo)
 {
-    system("cls");
 
-    cout << "--- ¡Comienza el combate! ---\n";
+    std::cout << "--- ¡Comienza el combate! ---\n";
     jugador.mostrarEstado();
     enemigo.mostrarEstado();
 
@@ -397,10 +386,8 @@ void combate(Jugador& jugador, Enemigo& enemigo)
     {
         int opcion;
 
-        system("cls");
-
-        cout << "Elige acción:  1. Atacar  2. Usar objeto\n";
-        cin >> opcion;
+        std::cout << "Elige acción:  1. Atacar  2. Usar objeto\n";
+        std::cin >> opcion;
 
         if (opcion == 1)
         {
@@ -412,7 +399,7 @@ void combate(Jugador& jugador, Enemigo& enemigo)
         }
         else
         {
-            cout << "Opción inválida.\n";
+            std::cout << "Opción inválida.\n";
 
             continue;
         }
@@ -427,11 +414,11 @@ void combate(Jugador& jugador, Enemigo& enemigo)
     {
         int oroGanado = generarNumeroAleatorio(5, 15);
         jugador.ganarOro(oroGanado);
-        cout << "¡Has derrotado al " << enemigo.getNombre() << "! Ganaste " << oroGanado << " de oro.\n";
+        std::cout << "¡Has derrotado al " << enemigo.getNombre() << "! Ganaste " << oroGanado << " de oro.\n";
     }
     else
     {
-        cout << "Has sido derrotado...\n";
+        std::cout << "Has sido derrotado...\n";
     }
 }
 
@@ -439,25 +426,42 @@ void combate(Jugador& jugador, Enemigo& enemigo)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int main()
 {
-    int option;
-    string textoVacio;
-    string Lento;
+    Jugador jugador("Alfonzo");
+    Tienda tienda;
 
-    while (true) 
+    int option = 0;
+    int option2 = 0;
+    int option3 = 0;
+    int option4 = 0;
+    int option5 = 0;
+    int option6 = 0;
+    int option7 = 0;
+
+    std::string textoVacio;
+    std::string Lento;
+
+    Lento = "Despiertas en un lugar extraño.\n";
+    imprimirLento(Lento, 40);
+
+    do
     {
-        system("cls");
 
-        string despertar = "Despiertas en un lugar extraño.\n";
-        imprimirLento(despertar, 40);
+        Lento = "Decides 1- Levantarte   2- Seguir durmiendo.\n";
+        imprimirLento(Lento, 30);
+        std::cin >> option;
 
-        string primeraOpcion = "Decides 1- Levantarte   2- Seguir durmiendo.\n";
-        imprimirLento(primeraOpcion, 30);
-        cin >> option;
+        //Forma parea que el codigo no se rompa en caso de ingresar una letra por chatsito GPT
+        if (std::cin.fail())
+        {
+            std::cin.clear(); // Limpia el estado de error
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta el resto de la línea
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            continue;
+        }
 
         switch (option)
         {
         case 1:
-
             Lento = "Muy bien con optimismo, te esperan buenas cosas en este viaje, recuerda que al que madruga Dios le ayuda.\n";
             imprimirLento(Lento, 40);
             break;
@@ -465,23 +469,17 @@ int main()
         case 2:
             Lento = "Pues no papito aqui no se hace lo que quieras mientras vivas en esta casa me haras caso MI CODIGO!!! MIS REGLAS!!!\n";
             imprimirLento(Lento, 40);
-
             break;
 
         default:
-            cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
 
-            system("pause");
-
-            continue;
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            break;
         }
+    } while (option != 1 && option != 2);
 
-        system("pause");
-        break;
-
-    }
-
-    system("cls");
+    std::system("pause");
+    std::system("cls");
 
     Lento = "Bueno, ya estamos levantaditos asi que \n";
     imprimirLento(Lento, 40);
@@ -489,23 +487,30 @@ int main()
     Lento = "...\n";
     imprimirLento(Lento, 1000);
 
+    std::system("cls");
+
     Lento = "RWAAAAAAAAAAAAAAAAR\n";
-    imprimirLento(Lento, 20);
+    imprimirLento(Lento, 50);
 
-    system("pause");
-    system("cls");
+    std::system("cls");
 
     Lento = "flush\n";
     imprimirLento(Lento, 20);
-    Lento = "flush\n";
-    imprimirLento(Lento, 20);
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
     Lento = "flush\n";
     imprimirLento(Lento, 20);
 
-    system("pause");
-    system("cls");
+    std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    Lento = "WOW, viste ese dragon, nunca lo habia visto antes espero que no sea un problema\n";
+    Lento = "flush\n";
+    imprimirLento(Lento, 20);
+
+    std::system("pause");
+    std::system("cls"),
+
+        Lento = "WOW, viste ese dragon, nunca lo habia visto antes espero que no sea un problema\n";
     imprimirLento(Lento, 40);
 
     Lento = " Que dices? QUE QUE QUIERES HACER!?\n";
@@ -513,69 +518,290 @@ int main()
 
     Lento = "1- Ir a matarlo 2- Ir a matarlo 3- Ir a matarlo 4- Ir a matarlo n- Ir a matarlo\n";
     imprimirLento(Lento, 30);
-    getline(cin, textoVacio);
-    
-	Lento = "Bueno, si tu lo dices ya que no hay otra opcion, vamos a matarlo\n";
-	imprimirLento(Lento, 40);
+    std::cin >> textoVacio;
 
-	Lento = "Creo que hay una aldea más adelante, deberiamos ir\n";
-	imprimirLento(Lento, 40);
+    Lento = "Bueno, si tu lo dices ya que no hay otra opcion, vamos a matarlo\n";
+    imprimirLento(Lento, 40);
 
-	Lento = "Creo que el camino era dos para enfente, uno a la derecha, otro para enfrente y uno a la izquierda.\n";
-	imprimirLento(Lento, 40);
+    Lento = "Creo que hay una aldea más adelante, deberiamos ir pero tenemos que pasar por el bosque\n";
+    imprimirLento(Lento, 40);
 
-	system("pause"); 
+    Lento = "Pero solo hay un camino correcto...\n";
+    imprimirLento(Lento, 40);
 
-    while (true || option == !4) 
-    {
-        system("cls");
+    do {                      //////////////////////////////////////////////// Enfrente /////////////////////////////////////////////////////////////////
+        Enemigo enemigo;
 
-        string primeraOpcion = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
-        imprimirLento(primeraOpcion, 30);
-        cin >> option;
+        Lento = "Creo que el camino era dos para enfente, uno a la derecha, otro para enfrente y uno a la izquierda.\n";
+        imprimirLento(Lento, 40);
 
-        switch (option)
+        Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
+        imprimirLento(Lento, 30);
+        std::cin >> option2;
+
+        if (std::cin.fail())
         {
-        case 1:
-
-            system("cls");
-			Jugador.mostrarInventario();
-
-            break;
-
-        case 2:
-
-            system("cls");
-            Enemigo enemigo;
-            combate(Jugador, enemigo);
-
-            break;
-
-		case 3:
-
-            system("cls");
-            Enemigo enemigo;
-            combate(Jugador, enemigo);
-
-            break;
-
-		case 4:
-
-            continue;
-
-        default:
-            cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
-
-            system("pause");
-
+            std::cin.clear(); // Limpia el estado de error
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta el resto de la línea
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
             continue;
         }
 
-        system("pause");
+        switch (option2)
+        {
+        case 1:   ////////////////////// Ver inventario /////////////////////////////////////////////////////////////////
+
+            jugador.mostrarInventario();
+            break;
+
+        case 2:  ////////////////////// Opcion correcta /////////////////////////////////////////////////////////////////
+
+            break;
+
+        case 3:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
+
+            combate(jugador, enemigo);
+            break;
+
+        case 4:  ////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
+
+            combate(jugador, enemigo);
+            break;
+
+        default:  ////////////////// Opcion invalida /////////////////////////////////////////////////////////////////
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            break;
+        }
+
         break;
 
-    }
+    } while (option2 == !2);
+
+    Lento = "Bien\n";
+    imprimirLento(Lento, 40);
+
+    do {                      //////////////////////////////////////////////// Enfrente /////////////////////////////////////////////////////////////////
+        Enemigo enemigo;
+
+        Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
+        imprimirLento(Lento, 30);
+        std::cin >> option3;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear(); // Limpia el estado de error
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta el resto de la línea
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            continue;
+        }
+
+        switch (option3)
+        {
+        case 1:  ////////////////////// Ver inventario /////////////////////////////////////////////////////////////////
+
+            jugador.mostrarInventario();
+            break;
+
+        case 2:  //////////////////// Opcion correcta /////////////////////////////////////////////////////////////////
+
+            break;
+
+        case 3:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
+
+            combate(jugador, enemigo);
+            break;
+
+        case 4:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
 
 
-    return 0;
-}
+            combate(jugador, enemigo);
+            break;
+
+        default:  ////////////////// Opcion invalida /////////////////////////////////////////////////////////////////
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            break;
+        }
+    } while (option3 == !2);
+
+    Lento = "Sigue asi\n";
+    imprimirLento(Lento, 40);
+
+    do {                      //////////////////////////////////////////////// Derecha /////////////////////////////////////////////////////////////////
+        Enemigo enemigo;
+
+        Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
+        imprimirLento(Lento, 30);
+        std::cin >> option4;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear(); // Limpia el estado de error
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta el resto de la línea
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            continue;
+        }
+
+        switch (option4)
+        {
+        case 1:  ////////////////////// Ver inventario /////////////////////////////////////////////////////////////////
+
+            jugador.mostrarInventario();
+            break;
+
+        case 2:  //////////////////// Opcion correcta /////////////////////////////////////////////////////////////////
+
+            combate(jugador, enemigo);
+            break;
+
+        case 3:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
+
+            combate(jugador, enemigo);
+            break;
+
+        case 4:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
+
+            break;
+
+        default:  ////////////////// Opcion invalida /////////////////////////////////////////////////////////////////
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            break;
+        }
+    } while (option4 == !4);
+
+    Lento = "Ya casi llegamos\n";
+    imprimirLento(Lento, 40);
+
+    do {                      //////////////////////////////////////////////// Enfrente /////////////////////////////////////////////////////////////////
+        Enemigo enemigo;
+
+        Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
+        imprimirLento(Lento, 30);
+        std::cin >> option5;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear(); // Limpia el estado de error
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta el resto de la línea
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            continue;
+        }
+
+        switch (option5)
+        {
+        case 1:  ////////////////////// Ver inventario /////////////////////////////////////////////////////////////////
+
+            jugador.mostrarInventario();
+            break;
+
+        case 2:  //////////////////// Opcion correcta /////////////////////////////////////////////////////////////////
+
+            break;
+
+        case 3:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
+
+            combate(jugador, enemigo);
+            break;
+
+        case 4:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
+
+
+            combate(jugador, enemigo);
+            break;
+
+        default:  ////////////////// Opcion invalida /////////////////////////////////////////////////////////////////
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            break;
+        }
+    } while (option == !2);
+
+    Lento = "Falata solo uno más\n";
+    imprimirLento(Lento, 40);
+
+
+    do {                      //////////////////////////////////////////////// izquierda /////////////////////////////////////////////////////////////////
+        Enemigo enemigo;
+
+        Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
+        imprimirLento(Lento, 30);
+        std::cin >> option6;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear(); // Limpia el estado de error
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta el resto de la línea
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            continue;
+        }
+
+        switch (option6)
+        {
+        case 1:  ////////////////////// Ver inventario /////////////////////////////////////////////////////////////////
+
+            jugador.mostrarInventario();
+            break;
+
+        case 2:  //////////////////// Opcion correcta /////////////////////////////////////////////////////////////////
+
+            combate(jugador, enemigo);
+            break;
+
+        case 3:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
+
+            break;
+
+        case 4:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
+
+            combate(jugador, enemigo);
+            break;
+
+        default:  ////////////////// Opcion invalida /////////////////////////////////////////////////////////////////
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            break;
+        }
+    } while (option6 == !3);
+
+    Lento = "Bueno, ya que hemos llegado a la aldea\n";
+    imprimirLento(Lento, 40);
+
+    do { 
+        Enemigo enemigo;
+
+        Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir a la tienda  3- Ir a matar mountruos  4- Ir a matarc al dragon. \n";
+        imprimirLento(Lento, 30);
+        std::cin >> option7;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear(); // Limpia el estado de error
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descarta el resto de la línea
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            continue;
+        }
+
+        switch (option7)
+        {
+        case 1:  
+
+            jugador.mostrarInventario();
+            break;
+
+        case 2:  
+
+            tienda.comprar(jugador);
+            break;
+
+        case 3:  
+
+            combate(jugador, enemigo);
+            break;
+
+        case 4:  
+
+            break;
+
+        default: 
+            std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
+            break;
+        }
+    } while (option7 == 1 && option7 == 2 && option == 3 && option == !4);
+};

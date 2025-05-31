@@ -1,22 +1,3 @@
 ﻿  Source.cpp
-C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(104,9): error C3668: 'Arma::getDano': el método con el especificador de invalidación 'override' no invalidó ningún método de clase base
-C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(194,61): error C2039: "getDano": no es un miembro de "Item"
-      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(40,7):
-      vea la declaración de 'Item'
-  
-C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(244,67): warning C4267: 'argumento': conversión de 'size_t' a 'int'; posible pérdida de datos
-C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(542,11): error C2059: error de sintaxis: '.'
-C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(550,21): error C2275: 'Jugador': se esperaba una expresión en lugar de un tipo
-C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(557,21): error C2086: 'Enemigo enemigo': nueva definición
-      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(549,21):
-      vea la declaración de 'enemigo'
-  
-C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(558,21): error C2275: 'Jugador': se esperaba una expresión en lugar de un tipo
-C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(554,3): error C2360: la inicialización de 'enemigo' se omite en la etiqueta 'case'
-      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(549,21):
-      vea la declaración de 'enemigo'
-  
-C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(562,9): error C2361: la inicialización de 'enemigo' se omite en la etiqueta 'default'
-      C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(549,21):
-      vea la declaración de 'enemigo'
-  
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(240,67): warning C4267: 'argumento': conversión de 'size_t' a 'int'; posible pérdida de datos
+  El gran juego.vcxproj -> C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\x64\Debug\El gran juego.exe
