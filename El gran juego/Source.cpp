@@ -227,7 +227,8 @@ public:
 
 //Clase Enemigo
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class Enemigo {
+class Enemigo 
+{
     std::string nombre;
     int salud;
     int ataque;
@@ -243,7 +244,7 @@ public:
         defensa = generarNumeroAleatorio(0, 25);
     }
 
-    void mostrarEstado() const
+    virtual void mostrarEstado() const
     {
         std::cout << nombre << " - Salud: " << salud << ", Ataque: " << ataque << ", Defensa: " << defensa << std::endl;
     }
@@ -265,6 +266,26 @@ public:
 
     int getAtaque() const { return ataque; }
     std::string getNombre() const { return nombre; }
+};
+
+//Clase mini Jefe
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class JefeFinal : public Enemigo {
+private:
+    std::string nombre;
+    int salud;
+    int ataque;
+    int defensa;
+
+public:
+
+	JefeFinal() : nombre("Dragon"), salud(500), ataque(generarNumeroAleatorio(50,100)), defensa(40) {}
+    
+    void mostrarEstado() const override 
+    {
+        std::cout << "Jefe Final: " << nombre << "\n";
+        std::cout << "Salud: " << salud << " | Ataque: " << ataque << " | Defensa: " << defensa << "\n";
+    }
 };
 
 //Clase Tienda
@@ -418,9 +439,11 @@ void combate(Jugador& jugador, Enemigo& enemigo)
     }
     else
     {
-        std::cout << "Has sido derrotado...\n";
+        std::cout << "Perdiste Muak Muak Muuaaaaak\n";
+        exit(0); // Termina el programa
     }
 }
+
 
 //Ya ahora si el jueguito
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -429,13 +452,13 @@ int main()
     Jugador jugador("Alfonzo");
     Tienda tienda;
 
-    int option = 0;
-    int option2 = 0;
-    int option3 = 0;
-    int option4 = 0;
-    int option5 = 0;
-    int option6 = 0;
-    int option7 = 0;
+    int option;
+    int option2;
+    int option3;
+    int option4;
+    int option5;
+    int option6;
+    int option7;
 
     std::string textoVacio;
     std::string Lento;
@@ -803,5 +826,13 @@ int main()
             std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
             break;
         }
-    } while (option7 == 1 && option7 == 2 && option == 3 && option == !4);
+    } while (option7 == 1 || option7 == 2 || option == 3 || option == !4);
+
+    JefeFinal dragon;
+    combate(jugador, dragon);
+
+	Lento = "Felicidades has ganado el juego, espero que te haya gustado, si quieres volver a jugar reinicia el programa.\n";
+	imprimirLento(Lento, 40);
+
+	return 0;
 };
