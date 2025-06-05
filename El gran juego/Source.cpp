@@ -11,6 +11,9 @@
 #include <vector>
 #include <cstdlib>
 #include <limits>
+#include <locale>//Para usar caracteres especiales
+#include <codecvt>//igualito que arriba
+
 
 
 //Genarador de números aleatorios by ChatGPT
@@ -35,7 +38,8 @@ void imprimirLento(const std::string& texto, int retrasoMilisegundos)
 
 //Clase Item
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class Item {
+class Item 
+{
 protected:
     std::string nombre;
     std::string tipo;
@@ -53,7 +57,8 @@ public:
 
     void reducirCantidad(int c) { cantidad -= c; }
 
-    virtual void mostrarInfo() const {
+    virtual void mostrarInfo() const 
+    {
         std:: cout << nombre << " | Tipo: " << tipo << " | Cantidad: " << cantidad << std::endl;
     }
 
@@ -65,7 +70,8 @@ public:
 
 //Objeto Poción ayda de ChatGPT
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class Pocion : public Item {
+class Pocion : public Item 
+{
     std::string descripcion;
     int curacion;
 
@@ -73,36 +79,42 @@ public:
     Pocion(std::string _nombre, int _cantidad, std::string _descripcion, int _curacion)
         : Item(_nombre, "pocion", _cantidad), descripcion(_descripcion), curacion(_curacion) {}
 
-    void usar() override {
+    void usar() override 
+    {
         std::cout << "Usaste " << nombre << ": " << descripcion << " +" << curacion << " HP.\n";
     }
 
-    void mostrarInfo() const override {
+    void mostrarInfo() const override 
+    {
         Item::mostrarInfo();
         std::cout << "   Efecto: " << descripcion << " (+ " << curacion << " HP)\n";
     }
 
-    int getCuracion() const override {
+    int getCuracion() const override 
+    {
         return curacion;
     }
 };
 
 //Clase Arma by ChatGPT
 // //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class Arma : public Item {
+class Arma : public Item 
+{
     int dano;
 
 public:
     Arma(std::string _nombre, int _cantidad, int _dano)
         : Item(_nombre, "arma", _cantidad), dano(_dano) {}
 
-    void usar() override {
+    void usar() override 
+    {
         std::cout << "Equipas " << nombre << ". Daño de ataque: " << dano << std::endl;
     }
 
     int getDano() const override { return dano; }
 
-    void mostrarInfo() const override {
+    void mostrarInfo() const override 
+    {
         Item::mostrarInfo();
         std::cout << "   Daño de ataque: " << dano << std::endl;
     }
@@ -110,7 +122,7 @@ public:
 
 //Clase Jugador con ayuda de ChatGPT
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class Jugador 
+class Jugador
 {
     std::string nombre;
     int salud;
@@ -123,13 +135,13 @@ class Jugador
 
 public:
     Jugador(std::string _nombre)
-        : nombre(_nombre), salud(200), saludMaxima(300), ataqueBase(26), defensa(15), oro(50) {}
+        : nombre(_nombre), salud(200), saludMaxima(1000), ataqueBase(26), defensa(30), oro(50) {}
 
-    void agregarItem(Item* item) 
+    void agregarItem(Item* item)
     {
-        for (auto& i : inventario) 
+        for (auto& i : inventario)
         {
-            if (i->getNombre() == item->getNombre()) 
+            if (i->getNombre() == item->getNombre())
             {
                 i->reducirCantidad(-item->getCantidad());
                 delete item;
@@ -139,21 +151,22 @@ public:
         inventario.push_back(item);
     }
 
-public:
-    void mostrarInventario() const 
+    void mostrarInventario() const
     {
         std::cout << "--- Inventario de " << nombre << " ---\n";
-        if (inventario.empty()) {
+        if (inventario.empty()) 
+        {
             std::cout << "Inventario vacío.\n";
             return;
         }
-        for (size_t i = 0; i < inventario.size(); ++i) {
+        for (size_t i = 0; i < inventario.size(); ++i) 
+        {
             std::cout << i + 1 << ". ";
             inventario[i]->mostrarInfo();
         }
     }
 
-    void usarItem() 
+    void usarItem()
     {
         mostrarInventario();
         if (inventario.empty()) return;
@@ -163,25 +176,82 @@ public:
         std::cin >> eleccion;
         eleccion--;
 
-        if (eleccion >= 0 && eleccion < inventario.size()) 
+        if (eleccion >= 0 && eleccion < inventario.size())
         {
             inventario[eleccion]->usar();
 
             salud += inventario[eleccion]->getCuracion();
             if (salud > saludMaxima) salud = saludMaxima;
 
-            if (inventario[eleccion]->getTipo() == "arma") 
+            if (inventario[eleccion]->getTipo() == "arma")
             {
                 armaEquipada = inventario[eleccion];
             }
 
-            inventario[eleccion]->reducirCantidad(1);
-            if (inventario[eleccion]->getCantidad() <= 0) {
-                if (inventario[eleccion] == armaEquipada) armaEquipada = nullptr;
-                delete inventario[eleccion];
-                inventario.erase(inventario.begin() + eleccion);
-                std::cout << "Item eliminado del inventario.\n";
+            // Solo reducimos cantidad si NO es un arma
+            if (inventario[eleccion]->getTipo() != "arma") 
+            {
+                inventario[eleccion]->reducirCantidad(1);
+                if (inventario[eleccion]->getCantidad() <= 0) 
+                {
+                    delete inventario[eleccion];
+                    inventario.erase(inventario.begin() + eleccion);
+                    std::cout << "Item eliminado del inventario.\n";
+                }
             }
+        }
+        else
+        {
+            std::cout << "Opción inválida.\n";
+        }
+    }
+
+    int getAtaque() const
+    {
+        return ataqueBase + getArmaDano();
+    }
+
+    int getArmaDano() const 
+    {
+        return armaEquipada ? armaEquipada->getDano() : 0;
+    }
+
+    std::string getNombreArma() const 
+    {
+        return armaEquipada ? armaEquipada->getNombre() : "";
+    }
+
+    void cambiarArma() 
+    {
+        std::vector<Item*> armas;
+        for (auto* item : inventario) 
+        {
+            if (item->getTipo() == "arma") 
+            {
+                armas.push_back(item);
+            }
+        }
+
+        if (armas.empty()) 
+        {
+            std::cout << "No tienes armas en tu inventario.\n";
+            return;
+        }
+
+        std::cout << "--- Armas disponibles ---\n";
+        for (size_t i = 0; i < armas.size(); ++i) 
+        {
+            std::cout << i + 1 << ". " << armas[i]->getNombre() << " (Daño: " << armas[i]->getDano() << ")\n";
+        }
+
+        int opcion;
+        std::cout << "Selecciona el número del arma para equipar:\n";
+        std::cin >> opcion;
+
+        if (opcion >= 1 && opcion <= static_cast<int>(armas.size())) 
+        {
+            armaEquipada = armas[opcion - 1];
+            std::cout << "Has equipado " << armaEquipada->getNombre() << ".\n";
         }
         else 
         {
@@ -189,21 +259,22 @@ public:
         }
     }
 
-    int getAtaque() const 
-    {
-        if (armaEquipada) return ataqueBase + armaEquipada->getDano();
-        return ataqueBase;
-    }
-
-    void mostrarEstado() const 
+    void mostrarEstado() const
     {
         std::cout << nombre << " - Salud: " << salud << "/" << saludMaxima
             << ", Ataque: " << getAtaque() << ", Defensa: " << defensa
-            << ", Oro: " << oro << std::endl;
+            << ", Oro: " << oro;
+
+        if (armaEquipada) 
+        {
+            std::cout << " | Arma equipada: " << armaEquipada->getNombre();
+        }
+        std::cout << std::endl;
     }
 
     bool estaVivo() const { return salud > 0; }
-    void recibirDanio(int danio) 
+
+    void recibirDanio(int danio)
     {
         int dañoReal = std::max(0, danio - defensa);
         salud -= dañoReal;
@@ -212,7 +283,8 @@ public:
     }
 
     void ganarOro(int cantidad) { oro += cantidad; }
-    bool gastarOro(int cantidad) 
+
+    bool gastarOro(int cantidad)
     {
         if (oro >= cantidad)
         {
@@ -221,8 +293,8 @@ public:
         }
         return false;
     }
-    int getOro() const { return oro; }
 
+    int getOro() const { return oro; }
 };
 
 //Clase Enemigo
@@ -261,7 +333,6 @@ public:
         if (salud < 0) salud = 0;
         std::cout << nombre << " recibió " << dañoReal << " de daño. Salud restante: " << salud << std::endl;
 
-        system("pause");
     }
 
     int getAtaque() const { return ataque; }
@@ -270,7 +341,45 @@ public:
 
 //Clase mini Jefe
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-class JefeFinal : public Enemigo {
+class MiniJefe
+
+{
+private:
+    std::string nombre;
+    int salud;
+    int ataque;
+    int defensa;
+
+public:
+    MiniJefe() : nombre("dragon"), salud(1000), ataque(generarNumeroAleatorio(100, 200)), defensa(30) {}
+
+    virtual void mostrarEstado() const
+    {
+        std::cout << nombre << " - Salud: " << salud << ", Ataque: " << ataque << ", Defensa: " << defensa << std::endl;
+    }
+
+    bool estaVivo() const
+    {
+        return salud > 0;
+    }
+
+    void recibirDanio(int danio)
+    {
+        int dañoReal = std::max(0, danio - defensa);
+        salud -= dañoReal;
+        if (salud < 0) salud = 0;
+        std::cout << nombre << " recibió " << dañoReal << " de daño. Salud restante: " << salud << std::endl;
+
+    }
+
+    int getAtaque() const { return ataque; }
+    std::string getNombre() const { return nombre; }
+};
+
+//Clase Jefe Final
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+class JefeFinal
+{
 private:
     std::string nombre;
     int salud;
@@ -279,13 +388,29 @@ private:
 
 public:
 
-	JefeFinal() : nombre("Dragon"), salud(500), ataque(generarNumeroAleatorio(50,100)), defensa(40) {}
-    
-    void mostrarEstado() const override 
+    JefeFinal() : nombre("El_gran_programador"), salud(2000), ataque(generarNumeroAleatorio(200, 500)), defensa(70) {}
+
+    virtual void mostrarEstado() const
     {
-        std::cout << "Jefe Final: " << nombre << "\n";
-        std::cout << "Salud: " << salud << " | Ataque: " << ataque << " | Defensa: " << defensa << "\n";
+        std::cout << nombre << " - Salud: " << salud << ", Ataque: " << ataque << ", Defensa: " << defensa << std::endl;
     }
+
+    bool estaVivo() const
+    {
+        return salud > 0;
+    }
+
+    void recibirDanio(int danio)
+    {
+        int dañoReal = std::max(0, danio - defensa);
+        salud -= dañoReal;
+        if (salud < 0) salud = 0;
+        std::cout << nombre << " recibió " << dañoReal << " de daño. Salud restante: " << salud << std::endl;
+
+    }
+
+    int getAtaque() const { return ataque; }
+    std::string getNombre() const { return nombre; }
 };
 
 //Clase Tienda
@@ -310,8 +435,8 @@ class Tienda
     std::vector<Producto> stock =
     {
         { "Poción de Vida", "Restaura 50 HP", 50, 30 },
-        { "Elixir Menor", "Restaura 30 HP", 30, 20 },
-        { "Poción Mayor", "Restaura 100 HP", 100, 50 }
+        { "Elixir Menor", "Restaura 100 HP", 100, 45 },
+        { "Poción Mayor", "Restaura 150 HP", 200, 70 }
     };
 
     std::vector<ProductoArma> stockArmas =
@@ -321,7 +446,8 @@ class Tienda
         { "Espada de Diamante", generarNumeroAleatorio(40,80), 85},
         { "Hacha de Madera", generarNumeroAleatorio(30,40), 55},
         { "Hacha de Hierro", generarNumeroAleatorio(40,55), 70},
-        { "Hacha de Diamante", generarNumeroAleatorio(50,70), 95}
+        { "Hacha de Diamante", generarNumeroAleatorio(50,70), 95},
+        { "La Mamalona", 250, 600 }
     };
 
 public:
@@ -398,7 +524,6 @@ public:
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void combate(Jugador& jugador, Enemigo& enemigo)
 {
-
     std::cout << "--- ¡Comienza el combate! ---\n";
     jugador.mostrarEstado();
     enemigo.mostrarEstado();
@@ -406,44 +531,253 @@ void combate(Jugador& jugador, Enemigo& enemigo)
     while (jugador.estaVivo() && enemigo.estaVivo())
     {
         int opcion;
+        std::string arma = jugador.getNombreArma();
 
-        std::cout << "Elige acción:  1. Atacar  2. Usar objeto\n";
+        std::cout << "\nElige acción:\n";
+        std::cout << "1. Atacar (puño)\n";
+        std::cout << "2. Usar objeto\n";
+        if (!arma.empty()) 
+        {
+            std::cout << "3. Atacar con " << arma << "\n";
+        }
+        std::cout << "4. Cambiar arma\n";
+
         std::cin >> opcion;
 
-        if (opcion == 1)
+        if (std::cin.fail()) 
         {
-            enemigo.recibirDanio(jugador.getAtaque());
-        }
-        else if (opcion == 2)
-        {
-            jugador.usarItem();
-        }
-        else
-        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Opción inválida.\n";
-
             continue;
         }
 
-        if (enemigo.estaVivo())
+        if (opcion == 1) 
+        {
+            std::cout << "Atacas con los puños.\n";
+            enemigo.recibirDanio(jugador.getAtaque() - jugador.getArmaDano());
+        }
+        else if (opcion == 2) 
+        {
+            jugador.usarItem();
+            enemigo.mostrarEstado();
+        }
+        else if (opcion == 3 && !arma.empty()) 
+        {
+            std::cout << "Atacas con " << arma << ".\n";
+            enemigo.recibirDanio(jugador.getAtaque());
+        }
+        else if (opcion == 4) 
+        {
+            jugador.cambiarArma();
+            enemigo.mostrarEstado();
+        }
+        else 
+        {
+            std::cout << "Opción inválida.\n";
+            continue;
+        }
+
+        if (enemigo.estaVivo()) 
         {
             jugador.recibirDanio(enemigo.getAtaque());
         }
     }
 
-    if (jugador.estaVivo())
+    if (jugador.estaVivo()) 
     {
-        int oroGanado = generarNumeroAleatorio(5, 15);
+        int oroGanado = generarNumeroAleatorio(20, 35);
         jugador.ganarOro(oroGanado);
+
+        // Curar al jugador al terminar combate
+        int curacion = 50;
+        jugador.recibirDanio(-curacion); // Usamos daño negativo como curación
+        std::cout << "Te has curado " << curacion << " puntos tras la pelea.\n";
+
         std::cout << "¡Has derrotado al " << enemigo.getNombre() << "! Ganaste " << oroGanado << " de oro.\n";
     }
-    else
+    else 
     {
-        std::cout << "Perdiste Muak Muak Muuaaaaak\n";
-        exit(0); // Termina el programa
+        std::cout << "\n";
+        std::cout << "\n";
+		std::cout << "¡Has sido derrotado por " << enemigo.getNombre() << "!\n";
+        std::cout << "Muak Muak Muuaaaaak\n";
+        exit(0);
     }
 }
 
+
+//Sitema de pelea con el Mini Jefe
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void combate(Jugador& jugador, MiniJefe& minijefe)
+{
+    std::cout << "--- ¡Comienza el combate! ---\n";
+    jugador.mostrarEstado();
+    minijefe.mostrarEstado();
+
+    while (jugador.estaVivo() && minijefe.estaVivo())
+    {
+        int opcion;
+        std::string arma = jugador.getNombreArma();
+
+        std::cout << "\nElige acción:\n";
+        std::cout << "1. Atacar (puño)\n";
+        std::cout << "2. Usar objeto\n";
+        if (!arma.empty())
+        {
+            std::cout << "3. Atacar con " << arma << "\n";
+        }
+        std::cout << "4. Cambiar arma\n";
+
+        std::cin >> opcion;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Opción inválida.\n";
+            continue;
+        }
+
+        if (opcion == 1)
+        {
+            std::cout << "Atacas con los puños.\n";
+            minijefe.recibirDanio(jugador.getAtaque() - jugador.getArmaDano());
+        }
+        else if (opcion == 2)
+        {
+            jugador.usarItem();
+            minijefe.mostrarEstado();
+        }
+        else if (opcion == 3 && !arma.empty())
+        {
+            std::cout << "Atacas con " << arma << ".\n";
+            minijefe.recibirDanio(jugador.getAtaque());
+        }
+        else if (opcion == 4)
+        {
+            jugador.cambiarArma();
+            minijefe.mostrarEstado();
+        }
+        else
+        {
+            std::cout << "Opción inválida.\n";
+            continue;
+        }
+
+        if (minijefe.estaVivo())
+        {
+            jugador.recibirDanio(minijefe.getAtaque());
+        }
+    }
+
+    if (jugador.estaVivo())
+    {
+        int oroGanado = generarNumeroAleatorio(20, 35);
+        jugador.ganarOro(oroGanado);
+
+        // Curar al jugador al terminar combate
+        int curacion = 50;
+        jugador.recibirDanio(-curacion); // Usamos daño negativo como curación
+        std::cout << "Te has curado " << curacion << " puntos tras la pelea.\n";
+
+        std::cout << "¡Has derrotado al " << minijefe.getNombre() << "! Ganaste " << oroGanado << " de oro.\n";
+    }
+    else
+    {
+        std::cout << "\n";
+        std::cout << "\n";
+        std::cout << "¡Has sido derrotado por " << minijefe.getNombre() << "!\n";
+        std::cout << "Muak Muak Muuaaaaak\n";
+        exit(0);
+    }
+}
+
+//Sitema de pelea con el Jefe Final
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void combate(Jugador& jugador, JefeFinal& jefefinal)
+{
+    std::cout << "--- ¡Comienza el combate! ---\n";
+    jugador.mostrarEstado();
+    jefefinal.mostrarEstado();
+
+    while (jugador.estaVivo() && jefefinal.estaVivo())
+    {
+        int opcion;
+        std::string arma = jugador.getNombreArma();
+
+        std::cout << "\nElige acción:\n";
+        std::cout << "1. Atacar (puño)\n";
+        std::cout << "2. Usar objeto\n";
+        if (!arma.empty())
+        {
+            std::cout << "3. Atacar con " << arma << "\n";
+        }
+        std::cout << "4. Cambiar arma\n";
+
+        std::cin >> opcion;
+
+        if (std::cin.fail())
+        {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Opción inválida.\n";
+            continue;
+        }
+
+        if (opcion == 1)
+        {
+            std::cout << "Atacas con los puños.\n";
+            jefefinal.recibirDanio(jugador.getAtaque() - jugador.getArmaDano());
+        }
+        else if (opcion == 2)
+        {
+            jugador.usarItem();
+            jefefinal.mostrarEstado();
+        }
+        else if (opcion == 3 && !arma.empty())
+        {
+            std::cout << "Atacas con " << arma << ".\n";
+            jefefinal.recibirDanio(jugador.getAtaque());
+        }
+        else if (opcion == 4)
+        {
+            jugador.cambiarArma();
+            jefefinal.mostrarEstado();
+        }
+        else
+        {
+            std::cout << "Opción inválida.\n";
+            continue;
+        }
+
+        if (jefefinal.estaVivo())
+        {
+            jugador.recibirDanio(jefefinal.getAtaque());
+        }
+    }
+
+    if (jugador.estaVivo())
+    {
+        int oroGanado = generarNumeroAleatorio(20, 35);
+        jugador.ganarOro(oroGanado);
+
+        // Curar al jugador al terminar combate
+        int curacion = 50;
+        jugador.recibirDanio(-curacion); // Usamos daño negativo como curación
+        std::cout << "Te has curado " << curacion << " puntos tras la pelea.\n";
+
+        std::cout << "¡Has derrotado al " << jefefinal.getNombre() << "! Ganaste " << oroGanado << " de oro.\n";
+    }
+    else
+    {
+        std::cout << "\n";
+        std::cout << "\n";
+        std::cout << "¡Has sido derrotado por " << jefefinal.getNombre() << "!\n";
+        std::cout << "Muak Muak Muuaaaaak\n";
+        exit(0);
+    }
+}
 
 //Ya ahora si el jueguito
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -459,14 +793,25 @@ int main()
     int option5;
     int option6;
     int option7;
+	int option8;
+
+    bool isContinue = true;
+	bool isContinue2 = true;
+	bool isContinue3 = true;
+	bool isContinue4 = true;
+	bool isContinue5 = true;
+	bool isContinue6 = true;
 
     std::string textoVacio;
     std::string Lento;
 
+    std::locale::global(std::locale("Spanish_Spain.1252"));  //Usar caracteres especiales
+    std::wcout.imbue(std::locale());//Usar caracteres especiales
+
     Lento = "Despiertas en un lugar extraño.\n";
     imprimirLento(Lento, 40);
 
-    do
+   do
     {
 
         Lento = "Decides 1- Levantarte   2- Seguir durmiendo.\n";
@@ -487,11 +832,22 @@ int main()
         case 1:
             Lento = "Muy bien con optimismo, te esperan buenas cosas en este viaje, recuerda que al que madruga Dios le ayuda.\n";
             imprimirLento(Lento, 40);
+
+            std::system("pause");
+            std::system("cls");
+
             break;
 
         case 2:
             Lento = "Pues no papito aqui no se hace lo que quieras mientras vivas en esta casa me haras caso MI CODIGO!!! MIS REGLAS!!!\n";
             imprimirLento(Lento, 40);
+
+			Lento = "Lamento eso\n";
+			imprimirLento(Lento, 40);
+
+            std::system("pause");
+            std::system("cls");
+
             break;
 
         default:
@@ -501,15 +857,19 @@ int main()
         }
     } while (option != 1 && option != 2);
 
-    std::system("pause");
-    std::system("cls");
+	Lento = "Cuentame, como te llamas?\n";
+	imprimirLento(Lento, 40);
 
-    Lento = "Bueno, ya estamos levantaditos asi que \n";
+	Lento = "...\n";
+	imprimirLento(Lento, 1000);
+
+	Lento = "No lo recuerdas? que raro, pero bueno no importa, te llamaremos Alfonzo, tienes cara de Alfonzo no crees?\n";
+	imprimirLento(Lento, 40);
+
+    Lento = "Pero bueno Alfonzo, ya estamos que estamos levantaditos vamos a... \n";
     imprimirLento(Lento, 40);
 
-    Lento = "...\n";
-    imprimirLento(Lento, 1000);
-
+	std::system("pause");
     std::system("cls");
 
     Lento = "RWAAAAAAAAAAAAAAAAR\n";
@@ -552,7 +912,12 @@ int main()
     Lento = "Pero solo hay un camino correcto...\n";
     imprimirLento(Lento, 40);
 
-    do {                      //////////////////////////////////////////////// Enfrente /////////////////////////////////////////////////////////////////
+    do                      //////////////////////////////////////////////// Enfrente ///////////////////////////////////////////////////////////////// 
+    {
+
+	    system("pause");    
+	    system("cls");
+
         Enemigo enemigo;
 
         Lento = "Creo que el camino era dos para enfente, uno a la derecha, otro para enfrente y uno a la izquierda.\n";
@@ -579,6 +944,7 @@ int main()
 
         case 2:  ////////////////////// Opcion correcta /////////////////////////////////////////////////////////////////
 
+			isContinue = false;
             break;
 
         case 3:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
@@ -595,19 +961,20 @@ int main()
             std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
             break;
         }
-
-        break;
-
-    } while (option2 == !2);
+    } while (isContinue);
 
     Lento = "Bien\n";
     imprimirLento(Lento, 40);
 
-    do {                      //////////////////////////////////////////////// Enfrente /////////////////////////////////////////////////////////////////
+    do   //////////////////////////////////////////////// Enfrente /////////////////////////////////////////////////////////////////
+    {
+	    system("pause");
+        system("cls");
+
         Enemigo enemigo;
 
         Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
-        imprimirLento(Lento, 30);
+        imprimirLento(Lento, 10);
         std::cin >> option3;
 
         if (std::cin.fail())
@@ -627,6 +994,7 @@ int main()
 
         case 2:  //////////////////// Opcion correcta /////////////////////////////////////////////////////////////////
 
+			isContinue2 = false;
             break;
 
         case 3:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
@@ -644,16 +1012,20 @@ int main()
             std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
             break;
         }
-    } while (option3 == !2);
+    } while (isContinue2);
 
     Lento = "Sigue asi\n";
     imprimirLento(Lento, 40);
 
-    do {                      //////////////////////////////////////////////// Derecha /////////////////////////////////////////////////////////////////
+    do            //////////////////////////////////////////////// Derecha /////////////////////////////////////////////////////////////////
+    {                      
+        system("pause");
+	    system("cls");
+
         Enemigo enemigo;
 
         Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
-        imprimirLento(Lento, 30);
+        imprimirLento(Lento, 10);
         std::cin >> option4;
 
         if (std::cin.fail())
@@ -663,7 +1035,7 @@ int main()
             std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
             continue;
         }
-
+        
         switch (option4)
         {
         case 1:  ////////////////////// Ver inventario /////////////////////////////////////////////////////////////////
@@ -671,7 +1043,7 @@ int main()
             jugador.mostrarInventario();
             break;
 
-        case 2:  //////////////////// Opcion correcta /////////////////////////////////////////////////////////////////
+        case 2:  //////////////////// Opcion incorrect /////////////////////////////////////////////////////////////////
 
             combate(jugador, enemigo);
             break;
@@ -681,24 +1053,29 @@ int main()
             combate(jugador, enemigo);
             break;
 
-        case 4:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
+        case 4:  //////////////////// Opcion correcta /////////////////////////////////////////////////////////////////
 
+            isContinue3 = false;
             break;
 
         default:  ////////////////// Opcion invalida /////////////////////////////////////////////////////////////////
             std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
             break;
         }
-    } while (option4 == !4);
+    } while (isContinue3);
 
     Lento = "Ya casi llegamos\n";
     imprimirLento(Lento, 40);
 
-    do {                      //////////////////////////////////////////////// Enfrente /////////////////////////////////////////////////////////////////
+    do                      //////////////////////////////////////////////// Enfrente ///////////////////////////////////////////////////////////////// 
+    {
+	    system("pause");
+	    system("cls");
+
         Enemigo enemigo;
 
         Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
-        imprimirLento(Lento, 30);
+        imprimirLento(Lento, 10);
         std::cin >> option5;
 
         if (std::cin.fail())
@@ -718,6 +1095,7 @@ int main()
 
         case 2:  //////////////////// Opcion correcta /////////////////////////////////////////////////////////////////
 
+			isContinue4 = false;
             break;
 
         case 3:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
@@ -735,17 +1113,21 @@ int main()
             std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
             break;
         }
-    } while (option == !2);
+    } while (isContinue4);
 
     Lento = "Falata solo uno más\n";
     imprimirLento(Lento, 40);
 
 
-    do {                      //////////////////////////////////////////////// izquierda /////////////////////////////////////////////////////////////////
+    do                      //////////////////////////////////////////////// izquierda ///////////////////////////////////////////////////////////////// 
+    {
+	    system("pause");
+	    system("cls");
+
         Enemigo enemigo;
 
         Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir para enfrente  3- Ir para la izquierda  4- Ir para la derecha.\n";
-        imprimirLento(Lento, 30);
+        imprimirLento(Lento, 10);
         std::cin >> option6;
 
         if (std::cin.fail())
@@ -770,6 +1152,7 @@ int main()
 
         case 3:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
 
+			isContinue5 = false;
             break;
 
         case 4:  //////////////////// Opcion incorrecta /////////////////////////////////////////////////////////////////
@@ -781,16 +1164,23 @@ int main()
             std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
             break;
         }
-    } while (option6 == !3);
+    } while (isContinue5);
 
     Lento = "Bueno, ya que hemos llegado a la aldea\n";
     imprimirLento(Lento, 40);
 
-    do { 
+	Lento = "Preparate bien que despues de esto nos espera una gran pelea con el dragon.\n";    
+	imprimirLento(Lento, 40);
+
+    do 
+    { 
+	    system("pause");
+        system("cls");
+
         Enemigo enemigo;
 
         Lento = "Que quieres hacer? 1- Abrir Inventario   2- Ir a la tienda  3- Ir a matar mountruos  4- Ir a matarc al dragon. \n";
-        imprimirLento(Lento, 30);
+        imprimirLento(Lento, 10);
         std::cin >> option7;
 
         if (std::cin.fail())
@@ -820,19 +1210,104 @@ int main()
 
         case 4:  
 
+			isContinue6 = false;
             break;
 
         default: 
             std::cout << "opcion en silla de ruedas (invalida), intentalo de nuevo\n";
             break;
         }
-    } while (option7 == 1 || option7 == 2 || option == 3 || option == !4);
+    } while (isContinue6);
 
-    JefeFinal dragon;
+
+
+    MiniJefe dragon;
     combate(jugador, dragon);
 
-	Lento = "Felicidades has ganado el juego, espero que te haya gustado, si quieres volver a jugar reinicia el programa.\n";
+	std::system("pause");
+	std::system("cls");
+
+    Lento = "Mjmjmjmj Muchas gracias js de verdad muchas gracias\n";
+	imprimirLento(Lento, 60);
+
+    Lento = "Sabes yo hestado aqui desde hace mucho\n";
 	imprimirLento(Lento, 40);
+
+	Lento = "En realidad he estado desde mucho antes de que tu nacieras, he visto como tu madre te pario y como tu padre te cuido.\n";
+	imprimirLento(Lento, 40);
+
+    Lento = "Y sabes por que?\n";
+    imprimirLento(Lento, 40);
+
+	Lento = "Por que yo cree este mundo, yo lo codifique desde la mas misera piedra hasta el mas grande de los dragones.\n";
+	imprimirLento(Lento, 40);
+
+    Lento = "Y como fui agradecido tras terminar tan maravillosa cración?\n";
+	imprimirLento(Lento, 40);
+
+	Lento = "Fui absorvido por el mismo mundo que yo cree, y condenado a pasar la eternidad en este lugar por el mismo dragon que acabas de matar\n";
+	imprimirLento(Lento, 40);
+
+	Lento = "Y ahora que soy libre por fin puedo tener mi venganza!!! Y DESTRUIR ESTE MALDITO Mundo!!! hasta el ultimo 1 y 0 de este lugar\n";
+	imprimirLento(Lento, 40);
+
+	std::system("pause");
+	std::system("cls");
+
+	std::cout << "----------Empieza la Ulitimate Batalla----------\n";
+
+    JefeFinal El_gran_programador;
+    combate(jugador, El_gran_programador);
+
+	if (jugador.estaVivo())
+	{
+		Lento = "NOOOOOOOOOOOOOOOOOOOOOOOOO\n";
+		imprimirLento(Lento, 40);
+
+        Lento = "Si quieres sobrevivir tienes que decir cual fue la tercera direccion que tomaste en el bosque\n";
+        imprimirLento(Lento, 40);
+
+        Lento = "¿Bajo que logica?\n";
+        imprimirLento(Lento, 40);
+
+        Lento = "Ninguna, el poder del guión o algo, despues de todo es mi codigo\n";
+		imprimirLento(Lento, 40);
+
+        Lento = "Asi que responde\n";
+		imprimirLento(Lento, 40);
+
+        Lento = "Que quieres hacer? 1- Ir para enfrente  2- Ir para la izquierda  3- Ir para la derecha.\n";
+        imprimirLento(Lento, 10);
+        std::cin >> option8;
+
+        if (option8 == 3)
+        {
+            Lento = "NOoOoOoOoOoOoOoOoOoO   ya que ni modo me mori blaaaaaa\n";
+			imprimirLento(Lento, 40);
+
+            Lento = "Has ganado, has derrotado al Jefe Final\n";
+            imprimirLento(Lento, 40);
+
+            Lento = "Gracias por jugar\n";
+            imprimirLento(Lento, 80);
+        }
+        else
+        {
+			Lento = "Incorrecto, has perdido, has sido derrotado por El gran programador\n";
+			imprimirLento(Lento, 40);
+
+			std::system("pause");
+            
+        }
+
+
+	}
+	else
+	{
+		Lento = "Has sido derrotado por el Jefe Final. Fin del juego.\n";
+		imprimirLento(Lento, 40);
+	}
+
 
 	return 0;
 };

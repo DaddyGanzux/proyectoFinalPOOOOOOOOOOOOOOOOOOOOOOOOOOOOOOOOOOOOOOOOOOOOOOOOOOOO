@@ -1,3 +1,9 @@
 ﻿  Source.cpp
-C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(241,67): warning C4267: 'argumento': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(313,67): warning C4267: 'argumento': conversión de 'size_t' a 'int'; posible pérdida de datos
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(791,9): warning C4101: 'option3': variable local sin referencia
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(789,9): warning C4101: 'option': variable local sin referencia
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(790,9): warning C4101: 'option2': variable local sin referencia
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(794,9): warning C4101: 'option6': variable local sin referencia
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(793,9): warning C4101: 'option5': variable local sin referencia
+C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\Source.cpp(792,9): warning C4101: 'option4': variable local sin referencia
   El gran juego.vcxproj -> C:\Users\User\Desktop\Tareas\GitHub\proyectoFinalPOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO\El gran juego\x64\Debug\El gran juego.exe
